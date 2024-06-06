@@ -38,17 +38,26 @@ const Calendar = (props: Props) => {
 	// Tarih seçerek etkinlik ekleme
 	function handleDateSelect(selectInfo: DateSelectArg) {
 		const now = new Date();
-		if (selectInfo.start < now) {
+		const start = new Date(selectInfo.start);
+
+		// Aylık görünümde tarih seçildiğinde anlık saati al ve biraz ileri al
+		if (selectInfo.view.type === 'dayGridMonth') {
+			start.setHours(now.getHours(), now.getMinutes() + 1, now.getSeconds(), now.getMilliseconds());
+		}
+
+		if (start < now) {
 			alert('Cannot add events in the past');
 			return;
 		}
-		const startDate = formatDateTime(selectInfo.start);
+
+		const startDate = formatDateTime(start);
 		router.push(`/add-event?start=${startDate}`);
 	}
 
 	// 'Add New Event' butonuyla etkinlik ekleme
 	function handleAddEvent() {
-		router.push('/add-event');
+		const startDate = formatDateTime(new Date());
+		router.push(`/add-event?start=${startDate}`);
 	}
 
 	// Tarih ve saati uygun formatta ayarlama fonksiyonu
