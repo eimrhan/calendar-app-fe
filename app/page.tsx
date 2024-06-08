@@ -1,8 +1,6 @@
-// new home
-
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from './_calendar/Calendar';
 import LayoutSidebarNavbar from '../components/LayoutSidebarNavbar';
 import { useRouter } from 'next/navigation';
@@ -10,6 +8,20 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
 	const [filter, setFilter] = useState('all');
 	const router = useRouter();
+
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		if (!token)
+			router.push("/login");
+		else
+			setLoading(false);
+	}, [])
+
+	if (loading) {
+		return null;
+	}
 
 	const handleAddEvent = () => {
 		const startDate = new Date().toISOString();

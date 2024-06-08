@@ -1,5 +1,3 @@
-// new calendar
-
 "use client";
 
 import FullCalendar from '@fullcalendar/react';
@@ -24,7 +22,6 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const token = localStorage.getItem('token');
-			if (!token) return;
 
 			try {
 				const response = await axios.get('http://localhost:60805/api/users/GetFromAuth', {
