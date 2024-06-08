@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import Sidebar from "@/components/Sidebar";
 import Calendar from "./_calendar/Calendar";
 
 type Props = {};
@@ -12,8 +11,7 @@ export default function Home(props: Props) {
 	const [loading, setLoading] = useState(true); // Yükleniyor durumu için state
 
 	useEffect(() => {
-		//const token = localStorage.getItem("token");
-		const token = true; //! silinecek satır
+		const token = localStorage.getItem("token");
 		
 		if (!token) {
 			router.push("/login");
@@ -29,7 +27,6 @@ export default function Home(props: Props) {
 	return (
 		<main className="min-h-screen flex">
 			<Calendar />
-			{/* <Sidebar /> */}
 		</main>
 	);
 }

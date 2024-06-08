@@ -3,21 +3,23 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [UserName, setUserName] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
 	const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/auth/register', {
-        username,
-        email,
-        password
+      const response = await axios.post('http://localhost:60805/api/auth/register', {
+        UserName,
+        Email,
+        Password
       });
+			toast.success("Successfully Signed Up!")
 			router.push('/login');
       console.log(response.data);
     } catch (error) {
@@ -31,21 +33,21 @@ export default function Register() {
       <input 
         type="text" 
         placeholder="Username" 
-        value={username} 
-        onChange={(e) => setUsername(e.target.value)} 
+        value={UserName} 
+        onChange={(e) => setUserName(e.target.value)} 
         className="p-2 border rounded"
       />
       <input 
         type="email" 
         placeholder="Email" 
-        value={email} 
+        value={Email} 
         onChange={(e) => setEmail(e.target.value)} 
         className="p-2 border rounded"
       />
       <input 
         type="password" 
         placeholder="Password" 
-        value={password} 
+        value={Password} 
         onChange={(e) => setPassword(e.target.value)} 
         className="p-2 border rounded"
       />
