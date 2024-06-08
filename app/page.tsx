@@ -1,33 +1,41 @@
+// new home
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from 'react';
+import Calendar from './_calendar/Calendar';
+import LayoutSidebarNavbar from '../components/LayoutSidebarNavbar';
 import { useRouter } from 'next/navigation';
-import Calendar from "./_calendar/Calendar";
 
-type Props = {};
-
-export default function Home(props: Props) {
+export default function Home() {
+	const [filter, setFilter] = useState('all');
 	const router = useRouter();
-	const [loading, setLoading] = useState(true); // Yükleniyor durumu için state
 
-	useEffect(() => {
-		const token = localStorage.getItem("token");
-		
-		if (!token) {
-			router.push("/login");
-		} else {
-			setLoading(false); // Token varsa yükleniyor durumunu bitir
-		}
-	}, [router]);
+	const handleAddEvent = () => {
+		const startDate = new Date().toISOString();
+		router.push(`/add-record?start=${startDate}&type=event`);
+	};
 
-	if (loading) {
-		return null; // Yükleniyor durumunda hiçbir şey göstermemek için null döndürüyoruz
-	}
+	const handleAddTask = () => {
+		const startDate = new Date().toISOString();
+		router.push(`/add-record?start=${startDate}&type=task`);
+	};
 
 	return (
-		<main className="min-h-screen flex">
-			<Calendar />
-		</main>
+		<div className="w-full">
+			<div className="flex flex-col lg:flex-row mx-auto">
+				<div className=''>
+					<LayoutSidebarNavbar
+						filter={filter}
+						setFilter={setFilter}
+						handleAddEvent={handleAddEvent}
+						handleAddTask={handleAddTask}
+					/>
+				</div>
+				<div className="flex-grow p-5">
+					<Calendar filter={filter} setFilter={setFilter} />
+				</div>
+			</div>
+		</div>
 	);
 }
-

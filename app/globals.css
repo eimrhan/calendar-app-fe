@@ -28,7 +28,7 @@ body {
 }
 
 .header {
-	margin:  0 auto 1em auto;
+	margin: 0 auto;
 	font-size: 3em;
 	font-weight: bolder;
 	font-stretch: expanded;

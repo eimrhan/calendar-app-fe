@@ -42,7 +42,7 @@ export default function Login() {
 				onChange={(e) => setPassword(e.target.value)}
 				className="p-2 border rounded"
 			/>
-			<button type="submit" className="p-2 bg-green-500 text-white rounded">Login</button>
+			<button type="submit" className="p-2 bg-green-800 text-white rounded">Login</button>
 			<p className='mx-auto'>
 				Don't have account? Go to <button className='text-[#98adc5] font-semibold underline' onClick={() => router.push('/register')}> Register</button>
 			</p>

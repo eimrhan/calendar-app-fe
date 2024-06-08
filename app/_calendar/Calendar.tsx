@@ -1,3 +1,5 @@
+// new calendar
+
 "use client";
 
 import FullCalendar from '@fullcalendar/react';
@@ -9,17 +11,16 @@ import { DateSelectArg } from '@fullcalendar/core/index.js';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
 
-type Props = {};
+type CalendarProps = {
+	filter: string;
+	setFilter: (filter: string) => void;
+};
 
-const Calendar = (props: Props) => {
+const Calendar = ({ filter, setFilter }: CalendarProps) => {
 	const [records, setRecords] = useState<any>([]);
-	const [filter, setFilter] = useState('all'); // 'all', 'events', 'tasks'
 	const router = useRouter();
 
-	// Backend'den kayıtları al
 	useEffect(() => {
 		const fetchData = async () => {
 			const token = localStorage.getItem('token');
@@ -39,12 +40,10 @@ const Calendar = (props: Props) => {
 		fetchData();
 	}, []);
 
-	// Tarih seçerek etkinlik veya görev ekleme
 	function handleDateSelect(selectInfo: DateSelectArg, type: 'event' | 'task') {
 		const now = new Date();
 		const start = new Date(selectInfo.start);
 
-		// Aylık görünümde tarih seçildiğinde anlık saati al ve biraz ileri al
 		if (selectInfo.view.type === 'dayGridMonth') {
 			start.setHours(now.getHours(), now.getMinutes() + 1, now.getSeconds(), now.getMilliseconds());
 		}
@@ -55,28 +54,24 @@ const Calendar = (props: Props) => {
 		}
 
 		const startDate = formatDateTime(start);
-		router.push(`/add-${type}?start=${startDate}`);
+		router.push(`/add-record?start=${startDate}&type=${type}`);
 	}
 
-	// 'Add New Event' butonuyla etkinlik ekleme
 	function handleAddEvent() {
 		const startDate = formatDateTime(new Date());
-		router.push(`/add-event?start=${startDate}`);
+		router.push(`/add-record?start=${startDate}&type=event`);
 	}
 
-	// 'Add New Task' butonuyla görev ekleme
 	function handleAddTask() {
 		const startDate = formatDateTime(new Date());
-		router.push(`/add-task?start=${startDate}`);
+		router.push(`/add-record?start=${startDate}&type=task`);
 	}
 
-	// Tarih ve saati uygun formatta ayarlama
 	function formatDateTime(date: Date) {
 		const pad = (n: number) => (n < 10 ? '0' + n : n);
 		return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
 	}
 
-	// Filtrelenmiş öğeleri al
 	function getFilteredItems() {
 		if (filter === 'events') {
 			return records.filter((r: any) => r.type === 'event');
@@ -88,47 +83,29 @@ const Calendar = (props: Props) => {
 	}
 
 	return (
-		<div className="w-full">
-			<Navbar
-				filter={filter}
-				setFilter={setFilter}
-				handleAddEvent={handleAddEvent}
-				handleAddTask={handleAddTask}
+		<div className='max-w-7xl mx-auto'>
+			<FullCalendar
+				locales={[trLocale]}
+				locale="tr"
+				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+				headerToolbar={{
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,timeGridWeek,timeGridDay',
+				}}
+				initialView="dayGridMonth"
+				editable={true}
+				selectable={true}
+				selectMirror={true}
+				weekends={true}
+				nowIndicator={true}
+				events={getFilteredItems()}
+				select={(info) => handleDateSelect(info, filter === 'tasks' ? 'task' : 'event')}
+				eventContent={renderEventContent}
+				eventClick={(arg) => console.log(arg)}
+				eventsSet={(arg) => console.log(arg)}
 			/>
-			<div className="flex flex-col lg:flex-row mx-auto">
-				<div className="flex-grow p-5">
-					<div className='max-w-7xl mx-auto'>
-						<FullCalendar
-							locales={[trLocale]}
-							locale="tr"
-							plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-							headerToolbar={{
-								left: 'prev,next today',
-								center: 'title',
-								right: 'dayGridMonth,timeGridWeek,timeGridDay',
-							}}
-							initialView="dayGridMonth"
-							editable={true}
-							selectable={true}
-							selectMirror={true}
-							weekends={true}
-							nowIndicator={true}
-							events={getFilteredItems()}
-							select={(info) => handleDateSelect(info, filter === 'tasks' ? 'task' : 'event')} // Tarih seçildiğinde tetiklenir
-							eventContent={renderEventContent} // Etkinliklerin gösterileceği fonksiyon
-							eventClick={(arg) => console.log(arg)} // Etkinliğe tıklanıldığında tetiklenir
-							eventsSet={(arg) => console.log(arg)} // Ay, hafta, gün gibi seçimlerde tetiklenir
-						/>
-						<div className='text-end italic mt-6 text-sm'>Copyright falan filan</div>
-					</div>
-				</div>
-				<Sidebar
-					filter={filter}
-					setFilter={setFilter}
-					handleAddEvent={handleAddEvent}
-					handleAddTask={handleAddTask}
-				/>
-			</div>
+			<div className='text-end italic mt-6 text-sm hidden lg:block'>Copyright falan filan</div>
 		</div>
 	);
 };
