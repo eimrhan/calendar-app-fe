@@ -1,5 +1,6 @@
 "use client";
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -14,11 +15,11 @@ export default function LayoutSidebarNavbar({ filter, setFilter }: LayoutSidebar
 
 	const [username, setUsername] = useState<string>("");
 
+
 	useEffect(() => {
-		const storedUsername = localStorage.getItem('username');
-		if (storedUsername) {
-			setUsername(storedUsername);
-		}
+		setTimeout(() => {
+			setUsername(localStorage.getItem('username') || "");
+		}, 1000); // hotfix
 	}, []);
 
 	const handleLogout = () => {
@@ -63,7 +64,13 @@ export default function LayoutSidebarNavbar({ filter, setFilter }: LayoutSidebar
 					</select>
 				</div>
 				<div className='flex lg:block justify-between'>
-					<div className='text-center lg:mb-1 my-auto mr-2 lg:mr-0 p-1.5 rounded underline hidden lg:block bg-[#f001]'>@{username}</div>
+					<div className='text-center lg:mb-1 my-auto mr-2 lg:mr-0 p-2 rounded-xl hidden lg:block bg-[#778DA922]'>
+						<Image src='/2.png'
+							width={500}
+							height={500}
+							alt="" />
+						<div className='text-2xl text-[#778DA9] bg-[#415A7744] tracking-wide font-medium rounded lg:mt-2'>@{username}</div>
+					</div>
 					<button onClick={handleLogout} className="lg:w-full p-2 bg-red-800 rounded">Logout</button>
 				</div>
 			</div>

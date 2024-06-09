@@ -35,6 +35,10 @@ body {
 	color: #E0E1DD;
 }
 
+form {
+	padding: 1em;
+}
+
 input, textarea, select {
 	background-color: #E0E1DD;
 	color: #0D1B2A;

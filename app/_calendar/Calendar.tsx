@@ -103,8 +103,6 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 				events={filteredRecords}
 				select={(info) => handleDateSelect(info, filter === 'tasks' ? 1 : 0)}
 				eventContent={renderEventContent}
-				eventClick={(arg) => console.log(arg)}
-				eventsSet={(arg) => console.log(arg)}
 			/>
 			<div className='text-end italic mt-6 text-sm hidden lg:block'>Copyright falan filan</div>
 		</div>

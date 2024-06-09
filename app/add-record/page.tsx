@@ -53,7 +53,7 @@ export default function AddRecord() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-2xl mx-auto min-h-screen justify-center p-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-2xl mx-auto min-h-screen justify-center">
       <div className="flex header">
         <h1 className=''>Add</h1>
         <select value={type} onChange={handleTypeChange} className="p-2 bg-[#1b263b] text-[#e0e1dd]">
