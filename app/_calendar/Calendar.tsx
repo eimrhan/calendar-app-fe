@@ -17,6 +17,7 @@ type CalendarProps = {
 
 const Calendar = ({ filter, setFilter }: CalendarProps) => {
 	const [records, setRecords] = useState<any>([]);
+	const [filteredRecords, setFilteredRecords] = useState<any>([]);
 	const router = useRouter();
 
 	useEffect(() => {
@@ -28,7 +29,16 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 					headers: { Authorization: `Bearer ${token}` }
 				});
 
-				setRecords(response.data);
+				const fetchedRecords = response.data.enrollments.map((record: any) => ({
+					title: record.title,
+					start: new Date(record.startDate),
+					end: new Date(record.endDate),
+					type: record.type // 0 for events and 1 for tasks
+				}));
+
+				setRecords(fetchedRecords);
+				localStorage.setItem("username", response.data.userName)
+
 			} catch (error) {
 				console.error('Error fetching data', error);
 			}
@@ -37,7 +47,11 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 		fetchData();
 	}, []);
 
-	function handleDateSelect(selectInfo: DateSelectArg, type: 'event' | 'task') {
+	useEffect(() => {
+		setFilteredRecords(getFilteredItems());
+	}, [filter, records]);
+
+	function handleDateSelect(selectInfo: DateSelectArg, type: 0 | 1) {
 		const now = new Date();
 		const start = new Date(selectInfo.start);
 
@@ -54,16 +68,6 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 		router.push(`/add-record?start=${startDate}&type=${type}`);
 	}
 
-	function handleAddEvent() {
-		const startDate = formatDateTime(new Date());
-		router.push(`/add-record?start=${startDate}&type=event`);
-	}
-
-	function handleAddTask() {
-		const startDate = formatDateTime(new Date());
-		router.push(`/add-record?start=${startDate}&type=task`);
-	}
-
 	function formatDateTime(date: Date) {
 		const pad = (n: number) => (n < 10 ? '0' + n : n);
 		return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
@@ -71,9 +75,9 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 
 	function getFilteredItems() {
 		if (filter === 'events') {
-			return records.filter((r: any) => r.type === 'event');
+			return records.filter((r: any) => r.type === 0);
 		} else if (filter === 'tasks') {
-			return records.filter((r: any) => r.type === 'task');
+			return records.filter((r: any) => r.type === 1);
 		} else {
 			return records;
 		}
@@ -96,8 +100,8 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
 				selectMirror={true}
 				weekends={true}
 				nowIndicator={true}
-				events={getFilteredItems()}
-				select={(info) => handleDateSelect(info, filter === 'tasks' ? 'task' : 'event')}
+				events={filteredRecords}
+				select={(info) => handleDateSelect(info, filter === 'tasks' ? 1 : 0)}
 				eventContent={renderEventContent}
 				eventClick={(arg) => console.log(arg)}
 				eventsSet={(arg) => console.log(arg)}

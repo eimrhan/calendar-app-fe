@@ -21,7 +21,6 @@ export default function Register() {
       });
 			toast.success("Successfully Signed Up!")
 			router.push('/login');
-      console.log(response.data);
     } catch (error) {
       console.error(error);
     }

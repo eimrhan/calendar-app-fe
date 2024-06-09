@@ -8,14 +8,14 @@ export default function AddRecord() {
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [type, setType] = useState('event'); // Varsayılan olarak 'event' yapabiliriz.
+  const [type, setType] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const start = searchParams.get('start');
-    const recordType = searchParams.get('type') || 'event';
-    setType(recordType);
+    const recordType = searchParams.get('type') || '0';
+    setType(Number(recordType));
     if (start) {
       setStartDate(start);
       setEndDate(start);
@@ -26,7 +26,7 @@ export default function AddRecord() {
     e.preventDefault();
     const now = new Date();
     if (new Date(startDate) < now || new Date(endDate) < now) {
-      alert(`Cannot add ${type}s in the past`);
+      alert(`Cannot add ${type === 0 ? 'event' : 'task'}s in the past`);
       return;
     }
 
@@ -34,7 +34,7 @@ export default function AddRecord() {
     if (!token) return;
 
     try {
-      await axios.post('http://localhost:60805/records/add_record', {
+      await axios.post('http://localhost:60805/api/enrollments', {
         title,
         startDate,
         endDate,
@@ -44,15 +44,25 @@ export default function AddRecord() {
       });
       router.push('/');
     } catch (error) {
-      console.error(`Error adding ${type}`, error);
+      console.error(`Error adding ${type === 0 ? 'event' : 'task'}`, error);
     }
+  };
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setType(Number(e.target.value));
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-2xl mx-auto min-h-screen justify-center p-4">
-      <h1 className='header'>Add {type.charAt(0).toUpperCase() + type.slice(1)}</h1>
+      <div className="flex header">
+        <h1 className=''>Add</h1>
+        <select value={type} onChange={handleTypeChange} className="p-2 bg-[#1b263b] text-[#e0e1dd]">
+          <option value={0}>Event</option>
+          <option value={1}>Task</option>
+        </select>
+      </div>
       <textarea
-        placeholder={`${type.charAt(0).toUpperCase() + type.slice(1)} Title`}
+        placeholder={`${type === 0 ? 'Event' : 'Task'} Title`}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="p-2 border rounded"
@@ -71,8 +81,8 @@ export default function AddRecord() {
         onChange={(e) => setEndDate(e.target.value)}
         className="p-2 border rounded"
       />
-      <button type="submit" className={`p-2 text-white rounded ${type === 'event' ? 'bg-blue-800' : 'bg-green-800'}`}>
-        Add {type.charAt(0).toUpperCase() + type.slice(1)}
+      <button type="submit" className={`p-2 text-white rounded ${type === 0 ? 'bg-blue-800' : 'bg-green-800'}`}>
+        Add {type === 0 ? 'Event' : 'Task'}
       </button>
     </form>
   );
