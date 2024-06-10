@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function AddRecord() {
   const [title, setTitle] = useState('');
@@ -26,7 +27,7 @@ export default function AddRecord() {
     e.preventDefault();
     const now = new Date();
     if (new Date(startDate) < now || new Date(endDate) < now) {
-      alert(`Cannot add ${type === 0 ? 'event' : 'task'}s in the past`);
+      toast.warning(`Cannot add ${type === 0 ? 'event' : 'task'}s in the past`);
       return;
     }
 
@@ -42,6 +43,7 @@ export default function AddRecord() {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+			toast.success(`Successfully added ${type === 0 ? 'event' : 'task'}`);
       router.push('/');
     } catch (error) {
       console.error(`Error adding ${type === 0 ? 'event' : 'task'}`, error);

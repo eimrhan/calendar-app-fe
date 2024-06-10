@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Modal from 'react-modal';
+import { toast } from 'react-toastify';
 
 type CalendarProps = {
   filter: string;
@@ -72,7 +73,7 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
     }
 
     if (start < now) {
-      alert('Cannot add items in the past');
+      toast.warning('Cannot add items in the past');
       return;
     }
 
@@ -110,6 +111,7 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
       const updatedRecords = records.map((record: any) => (record.id === updatedRecord.id ? { ...record, ...updatedRecord } : record));
       setRecords(updatedRecords);
       setModalIsOpen(false);
+			toast.success('Successfully Updated!')
     } catch (error) {
       console.error('Error updating event', error);
     }
@@ -127,6 +129,7 @@ const Calendar = ({ filter, setFilter }: CalendarProps) => {
       const remainingRecords = records.filter((record: any) => record.id !== selectedEvent.id);
       setRecords(remainingRecords);
       setModalIsOpen(false);
+			toast.error('Item Deleted!')
     } catch (error) {
       console.error('Error deleting event', error);
     }
