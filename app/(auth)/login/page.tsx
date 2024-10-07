@@ -16,7 +16,12 @@ export default function Login() {
 			const response = await axios.post('http://localhost:60805/api/auth/login', {
 				Email,
 				Password
-			});
+			},
+				{
+					withCredentials: true
+				}
+			);
+
 			localStorage.setItem('token', response.data.accessToken.token);
 			toast.success("Logged In!")
 			router.push('/');
